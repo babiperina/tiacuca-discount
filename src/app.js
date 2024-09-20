@@ -5,7 +5,7 @@ const couponRoutes = require('./routes/couponRoutes');
 const app = express();
 
 // Lista de origens permitidas
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = ['http://localhost:3000', 'https://babiperina.github.io/tiacuca-coupon/'];
 
 // Configurar CORS para múltiplas origens
 app.use(cors({
