@@ -32,6 +32,10 @@ app.use('/api/auth', authRoutes);
 // Usar as rotas de cupons com proteção
 app.use('/api/coupons', authMiddleware, couponRoutes); // Aplica a proteção
 
+
+// Usar as rotas de cupons com proteção
+app.use('/api/public-coupons', couponRoutes); // Aplica a proteção
+
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
