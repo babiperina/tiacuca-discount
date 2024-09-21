@@ -9,7 +9,7 @@ const generateUniqueCouponCode = async (collection) => {
   while (!isUnique) {
     // Gera um UUID e limita para 22 caracteres
     const uuid = uuidv4().replace(/-/g, '').substring(0, 22);
-    coupon_code = `MUVUKA-${uuid}`;
+    coupon_code = `TESTE-${uuid}`;
 
     // Verifica se o código já existe na coleção
     const existingCoupon = await collection.findOne({ coupon_code });
@@ -87,6 +87,29 @@ const useCoupon = async (req, res) => {
   }
 };
 
+// Marcar um cupom como usado
+const activeCoupon = async (req, res) => {
+  try {
+    const db = client.db('coupons_db');
+    const collection = db.collection('coupons');
+
+    const { coupon_code } = req.body;
+
+    const result = await collection.updateOne(
+      { coupon_code },
+      { $set: { status: 'active' } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: 'Cupom não encontrado' });
+    }
+
+    res.json({ message: 'Cupom marcado ativado com sucesso' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao marcar ativar o cupom' });
+  }
+};
+
 // Retornar todos os cupons
 const getAllCoupons = async (req, res) => {
   try {
@@ -105,5 +128,6 @@ module.exports = {
   createCoupon,
   getCoupon,
   useCoupon,
+  activeCoupon,
   getAllCoupons,
 };
