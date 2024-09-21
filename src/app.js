@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const { connectDB } = require('./config/db');
 const couponRoutes = require('./routes/couponRoutes');
+const authRoutes = require('./routes/authRoutes'); // Importar as rotas de autenticação
+const authMiddleware = require('./middleware/authMiddleware'); // Importar middleware de autenticação
 const app = express();
 
 // Lista de origens permitidas
@@ -24,8 +26,11 @@ app.use(express.json());
 // Conectar ao MongoDB
 connectDB();
 
-// Usar as rotas de cupons
-app.use('/api/coupons', couponRoutes);
+// Rotas de autenticação
+app.use('/api/auth', authRoutes);
+
+// Usar as rotas de cupons com proteção
+app.use('/api/coupons', authMiddleware, couponRoutes); // Aplica a proteção
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
