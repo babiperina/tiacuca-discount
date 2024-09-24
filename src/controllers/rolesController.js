@@ -1,3 +1,4 @@
+const { client } = require('../config/db');
 const Role = require('../models/rolesModel'); // Importa o modelo Role
 
 // Criar um novo papel
@@ -31,7 +32,10 @@ const createRole = async (req, res) => {
 // Buscar todos os papéis
 const getRoles = async (req, res) => {
   try {
-    const roles = await Role.find();
+    const db = client.db('coupons_db');
+    const collection = db.collection('roles');
+
+    const roles = await collection.find({}).toArray();  // Busca todos os documentos
     res.status(200).json(roles);
   } catch (error) {
     console.error('Erro ao buscar papéis:', error.message);
