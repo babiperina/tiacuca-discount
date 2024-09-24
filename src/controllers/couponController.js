@@ -1,6 +1,9 @@
 const { client } = require('../config/db');
 const { v4: uuidv4 } = require('uuid');  // Importa a função para gerar o uuid
 
+const db = client.db('coupons_db');
+const collection = db.collection('coupons');
+
 // Função para gerar um código de cupom único
 const generateUniqueCouponCode = async (collection) => {
   let isUnique = false;
@@ -25,8 +28,6 @@ const generateUniqueCouponCode = async (collection) => {
 const createCoupon = async (req, res) => {
   try {
     const { discount, expiration_date } = req.body;
-    const db = client.db('coupons_db');  // Nome do banco de dados
-    const collection = db.collection('coupons');  // Nome da coleção
 
     // Gera um código de cupom único
     const coupon_code = await generateUniqueCouponCode(collection);
@@ -50,9 +51,6 @@ const createCoupon = async (req, res) => {
 // Buscar um cupom pelo código
 const getCoupon = async (req, res) => {
   try {
-    const db = client.db('coupons_db');
-    const collection = db.collection('coupons');
-
     const coupon = await collection.findOne({ coupon_code: req.params.code });
     if (!coupon) {
       return res.status(404).json({ message: 'Cupom não encontrado' });
@@ -67,9 +65,6 @@ const getCoupon = async (req, res) => {
 // Marcar um cupom como usado
 const useCoupon = async (req, res) => {
   try {
-    const db = client.db('coupons_db');
-    const collection = db.collection('coupons');
-
     const { coupon_code } = req.body;
 
     const result = await collection.updateOne(
@@ -90,9 +85,6 @@ const useCoupon = async (req, res) => {
 // Marcar um cupom como usado
 const activeCoupon = async (req, res) => {
   try {
-    const db = client.db('coupons_db');
-    const collection = db.collection('coupons');
-
     const { coupon_code } = req.body;
 
     const result = await collection.updateOne(
@@ -113,9 +105,6 @@ const activeCoupon = async (req, res) => {
 // Retornar todos os cupons
 const getAllCoupons = async (req, res) => {
   try {
-    const db = client.db('coupons_db');
-    const collection = db.collection('coupons');
-
     const coupons = await collection.find({}).toArray();  // Busca todos os documentos
     res.json(coupons);  // Retorna a lista de cupons
   } catch (error) {

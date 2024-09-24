@@ -1,5 +1,7 @@
 const { client } = require('../config/db');
-const Role = require('../models/rolesModel'); // Importa o modelo Role
+
+const db = client.db('coupons_db');
+const collection = db.collection('roles');
 
 // Criar um novo papel
 const createRole = async (req, res) => {
@@ -7,34 +9,32 @@ const createRole = async (req, res) => {
     const { role_name, permissions, description } = req.body;
 
     // Verifica se o papel já existe
-    const existingRole = await Role.findOne({ role_name });
+    const existingRole = await collection.findOne({ role_name });
     if (existingRole) {
-      return res.status(400).json({ message: 'Papel já existe' });
+      return res.status(400).json({ message: 'Role já existe' });
     }
 
     // Criar um novo papel
-    const newRole = new Role({
+    const newRole = {
       role_name,
       permissions,
-      description
-    });
+      description,
+      create_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
 
     // Salvar no MongoDB
-    await newRole.save();
-
-    res.status(201).json({ message: 'Papel criado com sucesso!', role: newRole });
+    await collection.insertOne(newRole);
+    res.status(201).json({ message: 'Role criada com sucesso!', role: newRole });
   } catch (error) {
-    console.error('Erro ao criar papel:', error.message);
-    res.status(500).json({ error: 'Erro ao criar o papel' });
+    console.error('Erro ao criar a role:', error.message);
+    res.status(500).json({ error: 'Erro ao criar a role' });
   }
 };
 
 // Buscar todos os papéis
 const getRoles = async (req, res) => {
   try {
-    const db = client.db('coupons_db');
-    const collection = db.collection('roles');
-
     const roles = await collection.find({}).toArray();  // Busca todos os documentos
     res.status(200).json(roles);
   } catch (error) {
