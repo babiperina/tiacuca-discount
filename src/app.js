@@ -3,6 +3,7 @@ const cors = require('cors');
 const { connectDB } = require('./config/db');
 const couponRoutes = require('./routes/couponRoutes');
 const authRoutes = require('./routes/authRoutes'); // Importar as rotas de autenticação
+const rolesRoutes = require('./routes/rolesRoutes'); // Importar as rotas de autenticação
 const authMiddleware = require('./middleware/authMiddleware'); // Importar middleware de autenticação
 const app = express();
 
@@ -32,9 +33,11 @@ app.use('/api/auth', authRoutes);
 // Usar as rotas de cupons com proteção
 app.use('/api/coupons', authMiddleware, couponRoutes); // Aplica a proteção
 
-
 // Usar as rotas de cupons com proteção
 app.use('/api/public-coupons', couponRoutes); // Aplica a proteção
+
+// Usar as rotas de cupons com proteção
+app.use('/api/roles', rolesRoutes); // Aplica a proteção
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
