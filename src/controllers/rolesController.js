@@ -47,7 +47,7 @@ const getRoles = async (req, res) => {
 const getRoleByName = async (req, res) => {
     try {
       const { role_name } = req.params; // Pega o role_name da URL
-      const role = await Role.findOne({ role_name }); // Busca pelo role_name
+      const role = await collection.findOne({ role_name }); // Busca pelo role_name
   
       if (!role) {
         return res.status(404).json({ message: 'Papel não encontrado' });
@@ -67,7 +67,7 @@ const updateRole = async (req, res) => {
     const { role_name, permissions, description } = req.body;
 
     // Buscar e atualizar o papel
-    const updatedRole = await Role.findByIdAndUpdate(id, {
+    const updatedRole = await collection.findByIdAndUpdate(id, {
       role_name,
       permissions,
       description,
@@ -91,7 +91,7 @@ const deleteRole = async (req, res) => {
     const { id } = req.params;
 
     // Buscar e remover o papel
-    const deletedRole = await Role.findByIdAndDelete(id);
+    const deletedRole = await collection.findByIdAndDelete(id);
 
     if (!deletedRole) {
       return res.status(404).json({ message: 'Papel não encontrado' });
