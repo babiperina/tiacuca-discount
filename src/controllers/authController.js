@@ -5,12 +5,12 @@ const jwt = require('jsonwebtoken');
 // Registrar um novo usuário
 const registerUser = async (req, res) => {
   try {
-    const { email, password, roles } = req.body;
+    const { telefone, password, roles } = req.body;
     const db = client.db('coupons_db'); // Nome do banco de dados
     const collection = db.collection('users'); // Nome da coleção
 
     // Verifica se o usuário já existe
-    const existingUser = await collection.findOne({ email });
+    const existingUser = await collection.findOne({ telefone });
     if (existingUser) {
       return res.status(400).json({ message: 'Usuário já existe' });
     }
@@ -20,7 +20,7 @@ const registerUser = async (req, res) => {
 
     // Criar um novo usuário
     const newUser = {
-      email,
+      telefone,
       password: hashedPassword,
       roles,
       created_at: new Date().toISOString(),
@@ -40,12 +40,12 @@ const registerUser = async (req, res) => {
 // Fazer login do usuário
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { telefone, password } = req.body;
     const db = client.db('coupons_db'); // Nome do banco de dados
     const collection = db.collection('users'); // Nome da coleção
 
-    // Verifica se o usuário existe
-    const user = await collection.findOne({ email });
+    const user = await collection.findOne({ telefone });
+
     if (!user) {
       return res.status(400).json({ message: 'Usuário não encontrado' });
     }
