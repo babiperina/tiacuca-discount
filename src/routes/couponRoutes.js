@@ -1,5 +1,5 @@
 const express = require('express');
-const { createCoupon, getCoupon, useCoupon, getAllCoupons, activeCoupon } = require('../controllers/couponController');
+const { createCoupon, getCoupon, useCoupon, getAllCoupons, activeCoupon, deleteCouponByCodeName } = require('../controllers/couponController');
 const router = express.Router();
 
 // Rota para criar um novo cupom
@@ -10,6 +10,8 @@ router.get('/:code', getCoupon);
 
 // Rota para marcar um cupom como usado
 router.post('/use', useCoupon);
+
+router.delete("/:code", deleteCouponByCodeName);
 
 // Rota para ativar um cupom 
 router.post('/active', activeCoupon);

@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 // Registrar um novo usuário
 const registerUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, roles } = req.body;
     const db = client.db('coupons_db'); // Nome do banco de dados
     const collection = db.collection('users'); // Nome da coleção
 
@@ -22,6 +22,9 @@ const registerUser = async (req, res) => {
     const newUser = {
       email,
       password: hashedPassword,
+      roles,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString() 
     };
 
     // Inserir o novo usuário no MongoDB
