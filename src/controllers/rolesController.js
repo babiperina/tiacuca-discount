@@ -2,6 +2,7 @@ const { client } = require('../config/db');
 
 const db = client.db('coupons_db');
 const collection = db.collection('roles');
+const permissionsCollection = db.collection('permissions');
 
 // Criar um novo papel
 const createRole = async (req, res) => {
@@ -12,6 +13,16 @@ const createRole = async (req, res) => {
     const existingRole = await collection.findOne({ role_name });
     if (existingRole) {
       return res.status(400).json({ message: 'Role já existe' });
+    }
+
+    // Verifica se as permissões passadas existem no banco de dados
+    const existingPermissions = await permissionsCollection
+      .find({ permission_name: { $in: permissions } })
+      .toArray();
+
+    // Verifica se o número de permissões encontradas corresponde ao número de permissões passadas
+    if (existingPermissions.length !== permissions.length) {
+      return res.status(400).json({ message: 'Uma ou mais permissões não são válidas' });
     }
 
     // Criar um novo papel

@@ -27,10 +27,14 @@ const generateUniqueCouponCode = async (collection) => {
 // Criar um novo cupom
 const createCoupon = async (req, res) => {
   try {
-    const { discount, expiration_date } = req.body;
+    let { coupon_code, discount, expiration_date } = req.body;
 
-    // Gera um código de cupom único
-    const coupon_code = await generateUniqueCouponCode(collection);
+    if (!coupon_code || coupon_code === "undefined") {
+      coupon_code = await generateUniqueCouponCode(collection);
+    }
+
+
+    console.log(coupon_code);
 
     const newCoupon = {
       coupon_code,
@@ -38,7 +42,7 @@ const createCoupon = async (req, res) => {
       status: 'active',
       expiration_date: new Date(expiration_date),
     };
-
+    
     // Inserir o novo cupom no MongoDB
     await collection.insertOne(newCoupon);
     res.status(201).json({ message: 'Cupom criado com sucesso', coupon: newCoupon });
@@ -82,6 +86,23 @@ const useCoupon = async (req, res) => {
   }
 };
 
+// Excluir um cupom como usado
+const deleteCouponByCodeName = async (req, res) => {
+  try {
+    const coupon_code = req.params.code;
+
+    const result = await collection.deleteOne({ coupon_code });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: `Cupom com código ${coupon_code} não encontrado` });
+    }
+
+    res.json({ message: 'Cupom deletado com sucesso' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao deletar o cupom' });
+  }
+};
+
 // Marcar um cupom como usado
 const activeCoupon = async (req, res) => {
   try {
@@ -119,4 +140,5 @@ module.exports = {
   useCoupon,
   activeCoupon,
   getAllCoupons,
+  deleteCouponByCodeName
 };
