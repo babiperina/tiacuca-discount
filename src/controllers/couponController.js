@@ -1,6 +1,9 @@
 const { client } = require('../config/db');
 const { v4: uuidv4 } = require('uuid');  // Importa a função para gerar o uuid
 
+const db = client.db('coupons_db');
+const collection = db.collection('coupons');
+
 // Função para gerar um código de cupom único
 const generateUniqueCouponCode = async (collection) => {
   let isUnique = false;
@@ -24,12 +27,14 @@ const generateUniqueCouponCode = async (collection) => {
 // Criar um novo cupom
 const createCoupon = async (req, res) => {
   try {
-    const { discount, expiration_date } = req.body;
-    const db = client.db('coupons_db');  // Nome do banco de dados
-    const collection = db.collection('coupons');  // Nome da coleção
+    let { coupon_code, discount, expiration_date } = req.body;
 
-    // Gera um código de cupom único
-    const coupon_code = await generateUniqueCouponCode(collection);
+    if (!coupon_code || coupon_code === "undefined") {
+      coupon_code = await generateUniqueCouponCode(collection);
+    }
+
+
+    console.log(coupon_code);
 
     const newCoupon = {
       coupon_code,
@@ -37,7 +42,7 @@ const createCoupon = async (req, res) => {
       status: 'active',
       expiration_date: new Date(expiration_date),
     };
-
+    
     // Inserir o novo cupom no MongoDB
     await collection.insertOne(newCoupon);
     res.status(201).json({ message: 'Cupom criado com sucesso', coupon: newCoupon });
@@ -50,9 +55,6 @@ const createCoupon = async (req, res) => {
 // Buscar um cupom pelo código
 const getCoupon = async (req, res) => {
   try {
-    const db = client.db('coupons_db');
-    const collection = db.collection('coupons');
-
     const coupon = await collection.findOne({ coupon_code: req.params.code });
     if (!coupon) {
       return res.status(404).json({ message: 'Cupom não encontrado' });
@@ -67,9 +69,6 @@ const getCoupon = async (req, res) => {
 // Marcar um cupom como usado
 const useCoupon = async (req, res) => {
   try {
-    const db = client.db('coupons_db');
-    const collection = db.collection('coupons');
-
     const { coupon_code } = req.body;
 
     const result = await collection.updateOne(
@@ -87,12 +86,26 @@ const useCoupon = async (req, res) => {
   }
 };
 
+// Excluir um cupom como usado
+const deleteCouponByCodeName = async (req, res) => {
+  try {
+    const coupon_code = req.params.code;
+
+    const result = await collection.deleteOne({ coupon_code });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: `Cupom com código ${coupon_code} não encontrado` });
+    }
+
+    res.json({ message: 'Cupom deletado com sucesso' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao deletar o cupom' });
+  }
+};
+
 // Marcar um cupom como usado
 const activeCoupon = async (req, res) => {
   try {
-    const db = client.db('coupons_db');
-    const collection = db.collection('coupons');
-
     const { coupon_code } = req.body;
 
     const result = await collection.updateOne(
@@ -113,9 +126,6 @@ const activeCoupon = async (req, res) => {
 // Retornar todos os cupons
 const getAllCoupons = async (req, res) => {
   try {
-    const db = client.db('coupons_db');
-    const collection = db.collection('coupons');
-
     const coupons = await collection.find({}).toArray();  // Busca todos os documentos
     res.json(coupons);  // Retorna a lista de cupons
   } catch (error) {
@@ -130,4 +140,5 @@ module.exports = {
   useCoupon,
   activeCoupon,
   getAllCoupons,
+  deleteCouponByCodeName
 };
