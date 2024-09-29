@@ -101,10 +101,25 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+// Buscar todos os papéis
+const getUsers = async (req, res) => {
+  try {
+    const db = client.db('coupons_db'); // Nome do banco de dados
+    const collection = db.collection('users'); // Nome da coleção
+
+    const roles = await collection.find({}).toArray();  // Busca todos os documentos
+    res.status(200).json(roles);
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error.message);
+    res.status(500).json({ error: 'Erro ao buscar usuarios' });
+  }
+};
+
 // Exportar os controladores
 module.exports = {
   registerUser,
   loginUser,
   verifyToken,
   getUserProfile,
+  getUsers
 };
