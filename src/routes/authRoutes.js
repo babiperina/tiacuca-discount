@@ -8,4 +8,5 @@ router.post('/register', registerUser);
 // Rota para login de usuário
 router.post('/login', loginUser);
 
+
 module.exports = router;

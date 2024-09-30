@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
     const newUser = {
       telefone,
       password: hashedPassword,
-      roles,
+      roles: ['client'],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString() 
     };
@@ -100,11 +100,10 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar o perfil do usuário' });
   }
 };
-
 // Exportar os controladores
 module.exports = {
   registerUser,
   loginUser,
   verifyToken,
-  getUserProfile,
+  getUserProfile
 };
