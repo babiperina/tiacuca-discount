@@ -59,7 +59,7 @@ const loginUser = async (req, res) => {
     // Gera o token JWT
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ token, user });
+    res.json({ token, user: { telefone:user.telefone, roles:user.roles } });
   } catch (error) {
     console.error('Erro ao fazer login:', error.message);
     res.status(500).json({ error: 'Erro ao fazer login' });
