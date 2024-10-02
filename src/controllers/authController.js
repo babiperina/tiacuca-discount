@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
     const newUser = {
       telefone,
       password: hashedPassword,
-      roles: ['client'],
+      roles: ['users'],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString() 
     };
