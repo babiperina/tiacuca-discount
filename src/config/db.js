@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=tiacuca-discount`;
 
@@ -23,4 +23,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = { connectDB, client };
+module.exports = { connectDB, client, ObjectId };
