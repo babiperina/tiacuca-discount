@@ -1,22 +1,20 @@
 const User = require('../models/userModel'); // Importa o "model"
 
 
-// Buscar um papel específico pelo ID
-const getUserByTelefone = async (req, res) => {
+const changeUserRoleByUserId = async (req, res) => {
   try {
-    const { telefone } = req.params; // Pega o role_name da URL
-    const role = await collection.findOne({ telefone }); // Busca pelo role_name
+    const { id } = req.params; // Pega o ID do usuário da URL
+    const { newRole } = req.body; // Pega o novo role do corpo da requisição
 
-    if (!role) {
-      return res.status(404).json({ message: 'Papel não encontrado' });
-    }
-
-    res.status(200).json(role);
+    // Atualiza o role do usuário
+    const user = await User.updateUserRoleById(id, newRole);
+    res.status(200).json(user);
   } catch (error) {
-    console.error('Erro ao buscar papel:', error.message);
-    res.status(500).json({ error: 'Erro ao buscar o papel' });
+    console.error('Erro ao alterar o role do usuário:', error.message);
+    res.status(500).json({ error: 'Erro ao alterar o role do usuário' });
   }
 };
+
 
 // Buscar todos os usuários
 const getUsers = async (req, res) => {
@@ -30,5 +28,6 @@ const getUsers = async (req, res) => {
 };
 
 module.exports = {
-  getUsers
+  getUsers,
+  changeUserRoleByUserId
 };
